@@ -9,7 +9,7 @@
     Author: Martin Hvidberg <martin@hvidberg.net>
     
     SYNTAX:  gdbot.py rulefile logfile database_connection
-        e.g. gdbot.py rules\nulls.gdbot logs\nulls.log MyDatabase.sde
+        e.g. gdbot.py rules/nulls.gdbot logs/nulls.log MyDatabase.sde
     
     To do:
     
