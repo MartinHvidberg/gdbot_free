@@ -1,0 +1,43 @@
+# This line is a Comment
+
+# Any blank lines are ignored
+# 	Any line starting with % is an interpretation parameter for the whole .gdbot file
+# 	Any line starting with : is a rule line
+# 	Any other line is illegal
+
+% gdbot_syntax_version = 2.0 # From ver. 2.0 all OGR data are supported, and FCsubtype therefore have to go ...
+% file_title = "small gdbot sample file" # A reference name to put in the header of the log
+% log_file = small.gdbotlog # filename, may include full or relative path. Can be overwritten by gdbot.py 
+% email_log = (martin@hvidberg.net) # if empty, don't send log file by email
+
+
+# Next line shows a rule line structure
+# : RuleID : RuleTitle : Mode : Feature_Class : Condition : ActionType : Action : Comments
+# Next lines are a sample rule line, with explanation
+: 001 : Sample : SQL : Roads : SomeField NOT IN (1,2,3) AND SomeOtherField = 117 : FIX : SomeField = None, AnotherField = 5 : This is a sample line
+# : 001 <- This is the rule number.
+# : Sample <- This is the rule name, it's string. Optional
+# : SQL <- This is the rule interpretation mode. (SQL|LOVE) i.e. SQL or List Of Valid Elements
+# : Roads <- The FC(s) affected by this rule. String, or comma-separated string, or * for all FCs
+# : SomeField NOT IN (1,2,3) AND SomeOtherField = 117 <- Condition describing an error state, in sql format ...
+# : FIX <- What type of action to take. (FIX|LOG). i.e. Fix it or Log it.
+# : SomeField = None, AnotherField = 5 <- How to repair. Must be "field name = value" format, possibly several comma-separated pairs.
+
+# Some condition examples (SQL mode)
+# is Null
+# is not Null
+# = 0
+# <= 0
+# != 0
+# <> 0
+# > 117
+# not in (1,2,3)
+# in (4,5,6)
+# not in ('red','green',blue')
+# not in ('red','green',blue'); case insensitive? <- not implemented yet
+
+# Some examples of fix values:
+# SomeField = NULL <- actual NULL/None
+# SomeField = None <- actual NULL/None
+# SomeField = [SomeOtherField] <- set the value to whatever is in the field SomeOtherField, NOT IMPLEMENTED YET
+# SomeField = 5* [SomeOtherField] <- set the value to 5 times whatever is in the field SomeOtherField, rhs must be valid python code, NOT IMPLEMENTED YET
