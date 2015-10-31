@@ -20,7 +20,7 @@ from datetime import datetime # for datetime.now()
 import gdbot_utils
 
 import rule_parser
-import ogr_checker
+import data_checker
 
 
 def test():
