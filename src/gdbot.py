@@ -14,24 +14,13 @@
     To do:
     
 """
-import os, sys
+import sys
 from datetime import datetime # for datetime.now()
 
 import gdbot_utils
 
 import rule_parser
 import data_checker
-
-
-def test():
-    """Test to verify syntax and rule validity."""
-    print "Starting check tests..."
-    lst_rules = rule_parser.ReadRules(checkrules)
-    print lst_rules
-    dataset = "./some_test_data_source"
-    data_checker.CheckData(dataset, lst_rules)
-    print "Finished check tests."
-
 
 def main(data, rulefile, logfile, mails):
     
@@ -47,23 +36,23 @@ def main(data, rulefile, logfile, mails):
     #print lstRules
     
     if isinstance(lstRules, int): # if ReadRules returned a number, it's an error code...
-        utils.log("ReadRules returned an error...")
+        gdbot_utils.log("ReadRules returned an error...")
         return lstRules
 
     print "Number of rules: "+str(len(lstRules))
-    utils.log("  Checking {}, {} rules".format(rulefile, len(lstRules)))
+    gdbot_utils.log("  Checking {}, {} rules".format(rulefile, len(lstRules)))
     
     data_checker.CheckData(data, lstRules)
 
     timEnd = datetime.now()
     durRun = timEnd - timStart
-    utils.log("   Total " + __file__ + " duration (h:mm:ss.dd): " + str(durRun)[:-3])
+    gdbot_utils.log("   Total " + __file__ + " duration (h:mm:ss.dd): " + str(durRun)[:-3])
     
     # Finish off logfiles, etc. and clean up nicely...
     if len(logfile) > 0:
-        utils.writeLogToFile(logfile)
+        gdbot_utils.writeLogToFile(logfile)
     if len(mails) > 0:
-        utils.sendLogToEmail(mails, 'gdbot run, {}'.format(rulefile.split('\\')[-1]), "Found")
+        gdbot_utils.sendLogToEmail(mails, 'gdbot run, {}'.format(rulefile.split('\\')[-1]), "Found")
     
     timEnd = datetime.now()
     durRun = timEnd - timStart
@@ -72,8 +61,6 @@ def main(data, rulefile, logfile, mails):
     return 0
     
 if __name__ == "__main__":
-
-    #test()
 
     rules = r"~/rules/test.gdbot"
     logfile = r"~/logs/log.txt"
