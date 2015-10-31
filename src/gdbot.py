@@ -17,7 +17,7 @@
 import os, sys
 from datetime import datetime # for datetime.now()
 
-import utils
+import gdbot_utils
 
 import rule_parser
 import ogr_checker
