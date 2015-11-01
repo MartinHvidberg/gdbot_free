@@ -76,27 +76,30 @@ def CleanUpFixString(str_act_param): # XXX This is truly Ugly, rethink that...
 
 def ReadRules(path):
     """Read rules from a file, and return a list of Rule objects"""
+    print " Reading rule file: "+path
     lst_rules = list()
     bol_valid_version = False
     try:
         with open(path, 'r') as f:
             for line_raw in f:
                 line = line_raw.split('#')[0].strip()
-                if(line[0]=="%"): # % Parameter line
-                    lst_par = line.strip("%").strip().split('=')
-                    if lst_par[0]=='gdbot_syntax_version' and lst_par[0]=='2.0':
-                        gdbot_utils.log("parameter % {} set {}".format(lst_par[0],lst_par[1]))
-                        bol_valid_version = True
-                elif(line[0]==":"): # : Rule line
-                    lst_items = line[1:].split(":")
-                    if len(lst_items)==9:
-                        r = Rule(lst_items)
-                        if r.id != -1:
-                            lst_rules.append(r)
+                if len(line)>0:
+                    if(line[0]=="%"): # % Parameter line
+                        lst_par = line.strip("%").strip().split('=')
+                        if lst_par[0].strip()=='gdbot_syntax_version' and lst_par[1].strip()=='2.0':
+                            gdbot_utils.log("Recognise gdbot version 2.0")
+                            print "  Recognise gdbot version 2.0"
+                            bol_valid_version = True
+                    elif(line[0]==":"): # : Rule line
+                        lst_items = line[1:].split(":")
+                        if len(lst_items)==9:
+                            r = Rule(lst_items)
+                            if r.id != -1:
+                                lst_rules.append(r)
+                        else:
+                            gdbot_utils.log("Warning: Line does not contain the correct number of elements - Check that you comment do not contain ':'. Ignoring this rule. \n\t"+line.strip()+"\n\t"+str(len(lst_items))+'\t'+str(lst_items))
                     else:
-                        gdbot_utils.log("Warning: Line does not contain the correct number of elements - Check that you comment do not contain ':'. Ignoring this rule. \n\t"+line.strip()+"\n\t"+repr(items))
-                else:
-                    gdbot_utils.log("Warning: Rule line must start with #, % or : "+line[0]+" ("+line+")")
+                        gdbot_utils.log("Warning: Rule line must start with #, % or : "+line[0]+" ("+line+")")
             print "Done reading rules."
     except IOError, e:
         gdbot_utils.log(e.errno)

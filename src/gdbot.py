@@ -14,20 +14,26 @@
     To do:
     
 """
+
+str_title = __file__
+str_version = "2.0.0 build 20151031"
+
 import sys
 from datetime import datetime # for datetime.now()
 
 import gdbot_utils
 
 import rule_parser
-import data_checker
+#import data_checker
 
 def main(data, rulefile, logfile, mails):
     
-    print "    logfile: "+logfile
-    print "    rulefile: "+rules
-    print "    dataconn: "+data
-    print "    e-mail(s): "+str(mails)
+    print "Running: "+str_title
+    print "version: "+str_version
+    print " logfile: "+logfile
+    print " rulefile: "+rules
+    print " dataconn: "+data
+    print " e-mail(s): "+str(mails)
     
     timStart = datetime.now()
     
@@ -42,7 +48,7 @@ def main(data, rulefile, logfile, mails):
     print "Number of rules: "+str(len(lstRules))
     gdbot_utils.log("  Checking {}, {} rules".format(rulefile, len(lstRules)))
     
-    data_checker.CheckData(data, lstRules)
+    ###data_checker.CheckData(data, lstRules)
 
     timEnd = datetime.now()
     durRun = timEnd - timStart
@@ -62,16 +68,13 @@ def main(data, rulefile, logfile, mails):
     
 if __name__ == "__main__":
 
-    rules = r"~/rules/test.gdbot"
-    logfile = r"~/logs/log.txt"
-    data = r"~/data/some_data.file"
+    rules = r"../rules/test.gdbot"
+    logfile = r"../logs/log.txt"
+    data = r"../data/some_data.file"
     mails = []
     
     if (len(sys.argv)>1):
         rules = sys.argv[1]
-    else:
-        print "Usage: gdbot.py <rules.gdbot> <logfile.txt> <data_source> <e-mails>"
-        sys.exit()
     
     if len(sys.argv) > 2:
         logfile = sys.argv[2]
@@ -83,3 +86,5 @@ if __name__ == "__main__":
         mails = sys.argv[4].split(',')
     
     main(data, rules, logfile, mails)
+    
+    gdbot_utils.writeLogToFile(logfile)

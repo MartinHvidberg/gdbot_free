@@ -10,9 +10,9 @@ def log(string):
 
 def writeLogToFile(filename):
     """Write compiled log messages to file."""
-    with open(filename, 'w') as thefile:
-        for logline in lst_log:
-            thefile.write("%s\n" % logline)
+    with open(filename, 'w') as f:
+        for log in lst_log:
+            f.write(log+'\n')
 
 def sendLogToEmail(lst_recipients, subject, flag):
     '''Send contents of lst_log to given recipients.'''
