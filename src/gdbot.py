@@ -12,11 +12,10 @@
         e.g. gdbot.py rules/nulls.gdbot logs/nulls.log MyDatabase.sde
     
     To do:
-    
 """
 
 str_title = __file__
-str_version = "2.0.0 build 20151031"
+str_version = "2.0.0 build 20151103"
 
 import sys
 from datetime import datetime # for datetime.now()
@@ -28,63 +27,53 @@ import rule_parser
 
 def main(data, rulefile, logfile, mails):
     
-    print "Running: "+str_title
-    print "version: "+str_version
-    print " logfile: "+logfile
-    print " rulefile: "+rules
-    print " dataconn: "+data
-    print " e-mail(s): "+str(mails)
-    
-    timStart = datetime.now()
-    
     # Read the .gdbot file and build the list of bot-rules
-    lstRules = rule_parser.ReadRules(rulefile)
-    #print lstRules
-    
+    lstRules = rule_parser.ReadRules(rulefile)    
     if isinstance(lstRules, int): # if ReadRules returned a number, it's an error code...
         gdbot_utils.log("ReadRules returned an error...")
         return lstRules
-
     print "Number of rules: "+str(len(lstRules))
     gdbot_utils.log("  Checking {}, {} rules".format(rulefile, len(lstRules)))
     
     ###data_checker.CheckData(data, lstRules)
-
-    timEnd = datetime.now()
-    durRun = timEnd - timStart
-    gdbot_utils.log("   Total " + __file__ + " duration (h:mm:ss.dd): " + str(durRun)[:-3])
     
-    # Finish off logfiles, etc. and clean up nicely...
-    if len(logfile) > 0:
-        gdbot_utils.writeLogToFile(logfile)
-    if len(mails) > 0:
-        gdbot_utils.sendLogToEmail(mails, 'gdbot run, {}'.format(rulefile.split('\\')[-1]), "Found")
-    
-    timEnd = datetime.now()
-    durRun = timEnd - timStart
-    print "\n   Total " + __file__ + " duration (h:mm:ss.dd): " + str(durRun)[:-3]
+    # send e-mail, if required
 
     return 0
     
 if __name__ == "__main__":
+    
+    timStart = datetime.now()
 
-    rules = r"../rules/test.gdbot"
+    # Initialise 
+    rules = r"../rules/small.gdbot"
     logfile = r"../logs/log.txt"
     data = r"../data/some_data.file"
     mails = []
-    
-    if (len(sys.argv)>1):
-        rules = sys.argv[1]
-    
-    if len(sys.argv) > 2:
+    if (len(sys.argv)>1 and sys.argv[1]!="#"): # # means default
+        rules = sys.argv[1]    
+    if len(sys.argv)>2 and sys.argv[2]!="#":
         logfile = sys.argv[2]
-    
-    if len(sys.argv) > 3:
-        db = sys.argv[3]
-    
-    if len(sys.argv) > 4:
+    if len(sys.argv)>3 and sys.argv[3]!="#":
+        data = sys.argv[3]
+    if len(sys.argv)>4 and sys.argv[4]!="#":
         mails = sys.argv[4].split(',')
     
-    main(data, rules, logfile, mails)
+    # Start message
+    str_start_message = "*** "+str_title+"\n\tversion: "+str_version+"\n\tlogfile: "+logfile+"\n\trulefile: "+rules+"\n\tdataconn: "+data+"\n\te-mail(s): "+str(mails)
+    print str_start_message
+    gdbot_utils.log(str_start_message)
+    gdbot_utils.writeLogToFile(logfile, 'w')  
     
+    # Run
+    main(data, rules, logfile, mails)
+
+    # Clean and close
+    timEnd = datetime.now()
+    durRun = timEnd - timStart
+    str_end_message = "Python script completed " + str_title + " duration (h:mm:ss.dd): " + str(durRun)[:-3]
+    gdbot_utils.log(str_end_message)
     gdbot_utils.writeLogToFile(logfile)
+    print str_end_message    
+    
+# End of Python script ------    

@@ -5,14 +5,24 @@ lst_log = [] # Collector list for things to log ...
 def log(string):
     """Append message to the log."""
     global lst_log
-    lst_log.append(string)
+    lst_log.append(str(string))
+    print "loglength: "+str(len(lst_log))
     return 0
 
-def writeLogToFile(filename):
+def writeLogToFile(filename, mode='a'):
     """Write compiled log messages to file."""
-    with open(filename, 'w') as f:
-        for log in lst_log:
-            f.write(log+'\n')
+    if len(lst_log) > 0:
+        global lst_log
+        print "writelog: "+str(len(lst_log))+" to: "+filename
+        with open(filename, mode) as f:
+            for log in lst_log:
+                try:
+                    f.write(log+'\n')
+                except:
+                    print "Can't write: "+log
+        lst_log = list() # clear the log after sucessfull write
+        print "new log: "+str(len(lst_log))
+    return 0
 
 def sendLogToEmail(lst_recipients, subject, flag):
     '''Send contents of lst_log to given recipients.'''
