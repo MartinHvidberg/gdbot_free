@@ -19,6 +19,7 @@ str_version = "2.0.0 build 20151103"
 
 import sys
 from datetime import datetime # for datetime.now()
+import logging
 
 import gdbot_utils
 import gdbot_rules
@@ -32,7 +33,9 @@ def main(data, rulefile, logfile, mails):
     
     # Read the .gdbot file and build the list of bot-rules
     lst_para, lst_good, lst_badr = gdbot_rules.read_gdbot_file(rulefile)
-    print lst_para
+    print "para:"+str(lst_para)
+    print "good:"+str(len(lst_good))
+    print "badr:"+str(len(lst_badr))
     
     #===========================================================================
     # lstRules = rule_parser.ReadRules(rulefile)    
@@ -52,8 +55,6 @@ def main(data, rulefile, logfile, mails):
     
 if __name__ == "__main__":
     
-    timStart = datetime.now()
-
     # Initialise 
     rules = r"../rules/small.gdbot"
     logfile = r"../logs/log.txt"
@@ -68,22 +69,30 @@ if __name__ == "__main__":
     if len(sys.argv)>4 and sys.argv[4]!="#":
         mails = sys.argv[4].split(',')
     
-    # Start message
-    str_start_message = str(datetime.now())+"\n*** "+str_title+"\n\tversion: "+str_version+"\n\tlogfile: "+logfile+"\n\trulefile: "+rules+"\n\tdataconn: "+data+"\n\te-mail(s): "+str(mails)
-    print str_start_message
-    log = gdbot_utils.log_init()
-    gdbot_utils.log(str_start_message, log)
-    gdbot_utils.log_write_to_file(log, logfile, 'w')  
+    # Start message, and logging
+    str_start_message = "Start\n\tprogram: "+str_title+"\n\tversion: "+str_version+"\n\tlogfile: "+logfile+"\n\trulefile: "+rules+"\n\tdataconn: "+data+"\n\te-mail(s): "+str(mails)
+    logger = logging.getLogger('gdbot_2.0')
+    logger.setLevel(logging.DEBUG)
+    log_fil = logging.FileHandler(logfile) # logfile
+    log_fil.setLevel(logging.DEBUG)
+    log_con = logging.StreamHandler() # console messages
+    log_con.setLevel(logging.ERROR)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    log_con.setFormatter(formatter)
+    log_fil.setFormatter(formatter)
+    logger.addHandler(log_con)
+    logger.addHandler(log_fil)
+    logger.info(str_start_message)
     
     # Run
+    timStart = datetime.now()
     main(data, rules, logfile, mails)
+    timEnd = datetime.now()
 
     # Clean and close
-    timEnd = datetime.now()
     durRun = timEnd - timStart
-    str_end_message = "Python script completed " + str_title + " duration (h:mm:ss.dd): " + str(durRun)[:-3]
-    gdbot_utils.log(str_end_message, log)
-    gdbot_utils.log_write_to_file(log, logfile)
+    str_end_message = "Completed sucessfuly\n\tPython script completed - duration (h:mm:ss.dd): " + str(durRun)[:-3]
+    logger.info(str_end_message)
     print str_end_message    
     
-# End of Python script ------    
+# End of Python script ...
