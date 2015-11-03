@@ -92,7 +92,7 @@ def ReadRules(path):
                             bol_valid_version = True
                     elif(line[0]==":"): # : Rule line
                         lst_items = line[1:].split(":")
-                        if len(lst_items)==9:
+                        if len(lst_items)==8:
                             r = Rule(lst_items)
                             if r.id != -1:
                                 lst_rules.append(r)

@@ -1,34 +1,32 @@
-import smtplib, re
+import smtplib
 
-lst_log = [] # Collector list for things to log ...
+def log_init():
+    """ Initialise log """
+    return list()
 
-def log(string):
-    """Append message to the log."""
-    global lst_log
-    lst_log.append(str(string))
-    print "loglength: "+str(len(lst_log))
-    return 0
+def log(string, log):
+    """ Append message to the log. """
+    log.append(str(string))
+    return log
 
-def writeLogToFile(filename, mode='a'):
-    """Write compiled log messages to file."""
-    if len(lst_log) > 0:
-        global lst_log
-        print "writelog: "+str(len(lst_log))+" to: "+filename
+def log_write_to_file(log, filename, mode='a'):
+    """ Write compiled log messages to file. """
+    if len(log) > 0:
+        #print "writelog: "+str(len(log))+" to: "+filename
         with open(filename, mode) as f:
-            for log in lst_log:
+            for l in log:
                 try:
-                    f.write(log+'\n')
+                    f.write(l+'\n')
                 except:
-                    print "Can't write: "+log
-        lst_log = list() # clear the log after sucessfull write
-        print "new log: "+str(len(lst_log))
+                    print "Can't write: "+l
+        log = list() # clear the log after sucessfull write
     return 0
 
-def sendLogToEmail(lst_recipients, subject, flag):
-    '''Send contents of lst_log to given recipients.'''
+def send_log_to_email(lst_recipients, subject, flag):
+    """ Send contents of lst_log to given recipients. """
     # Set up contents
     SERVER = "mailgate.mim.dk"
-    FROM = "TeamNIS batch script <halpe@gst.dk>"
+    FROM = "gdbot <gdbot@work.com>"
     TO = lst_recipients
     MSG = ''
     status = 0
@@ -50,16 +48,12 @@ def sendLogToEmail(lst_recipients, subject, flag):
 
     return 0
 
-floatPattern = re.compile("^[0-9.,]+$")
-def isFloat(string):
-    """ Check if string looks like a float (or int) number. """
-    return re.search(floatPattern, string)
 
-def encodeIfUnicode(strval):
-    """Encode if string is unicode."""
-    if isinstance(strval, unicode):
-        return strval.encode('utf8')
-    return str(strval)
+# def encodeIfUnicode(strval):
+#     """Encode if string is unicode."""
+#     if isinstance(strval, unicode):
+#         return strval.encode('utf8')
+#     return str(strval)
 
 #def decodeIfUnicode(strval):
 #    """Decode if string is unicode."""

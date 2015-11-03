@@ -21,23 +21,32 @@ import sys
 from datetime import datetime # for datetime.now()
 
 import gdbot_utils
-
-import rule_parser
+import gdbot_rules
 #import data_checker
 
 def main(data, rulefile, logfile, mails):
     
+    # Read .gdbot file
+    rul_a = gdbot_rules.str_to_rule("")
+    print str(rul_a)
+    
     # Read the .gdbot file and build the list of bot-rules
-    lstRules = rule_parser.ReadRules(rulefile)    
-    if isinstance(lstRules, int): # if ReadRules returned a number, it's an error code...
-        gdbot_utils.log("ReadRules returned an error...")
-        return lstRules
-    print "Number of rules: "+str(len(lstRules))
-    gdbot_utils.log("  Checking {}, {} rules".format(rulefile, len(lstRules)))
+    lst_para, lst_good, lst_badr = gdbot_rules.read_gdbot_file(rulefile)
+    print lst_para
+    
+    #===========================================================================
+    # lstRules = rule_parser.ReadRules(rulefile)    
+    # if isinstance(lstRules, int): # if ReadRules returned a number, it's an error code...
+    #     gdbot_utils.log("ReadRules returned an error...")
+    #     return lstRules
+    # print "Number of rules: "+str(len(lstRules))
+    # gdbot_utils.log("  Checking {}, {} rules".format(rulefile, len(lstRules)))
+    #===========================================================================
     
     ###data_checker.CheckData(data, lstRules)
     
     # send e-mail, if required
+    #gdbot_utils.send_log_to_email(mails, "gdbot report: "+str(datetime.now()), "Error")
 
     return 0
     
@@ -60,10 +69,11 @@ if __name__ == "__main__":
         mails = sys.argv[4].split(',')
     
     # Start message
-    str_start_message = "*** "+str_title+"\n\tversion: "+str_version+"\n\tlogfile: "+logfile+"\n\trulefile: "+rules+"\n\tdataconn: "+data+"\n\te-mail(s): "+str(mails)
+    str_start_message = str(datetime.now())+"\n*** "+str_title+"\n\tversion: "+str_version+"\n\tlogfile: "+logfile+"\n\trulefile: "+rules+"\n\tdataconn: "+data+"\n\te-mail(s): "+str(mails)
     print str_start_message
-    gdbot_utils.log(str_start_message)
-    gdbot_utils.writeLogToFile(logfile, 'w')  
+    log = gdbot_utils.log_init()
+    gdbot_utils.log(str_start_message, log)
+    gdbot_utils.log_write_to_file(log, logfile, 'w')  
     
     # Run
     main(data, rules, logfile, mails)
@@ -72,8 +82,8 @@ if __name__ == "__main__":
     timEnd = datetime.now()
     durRun = timEnd - timStart
     str_end_message = "Python script completed " + str_title + " duration (h:mm:ss.dd): " + str(durRun)[:-3]
-    gdbot_utils.log(str_end_message)
-    gdbot_utils.writeLogToFile(logfile)
+    gdbot_utils.log(str_end_message, log)
+    gdbot_utils.log_write_to_file(log, logfile)
     print str_end_message    
     
 # End of Python script ------    
