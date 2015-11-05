@@ -75,12 +75,12 @@ if __name__ == "__main__":
     logger.setLevel(logging.DEBUG)
     log_fil = logging.FileHandler(logfile) # logfile
     log_fil.setLevel(logging.DEBUG)
-    log_con = logging.StreamHandler() # console messages
-    log_con.setLevel(logging.ERROR)
+    #log_con = logging.StreamHandler() # console messages
+    #log_con.setLevel(logging.ERROR)
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    log_con.setFormatter(formatter)
+    #log_con.setFormatter(formatter)
     log_fil.setFormatter(formatter)
-    logger.addHandler(log_con)
+    #logger.addHandler(log_con)
     logger.addHandler(log_fil)
     logger.info(str_start_message)
     
