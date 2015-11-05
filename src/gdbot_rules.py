@@ -7,7 +7,7 @@ some elementary sanity checking of the rules, before they are applied
 import logging
 
 # Recognised parameters in gdbot ver. 2.0
-lst_kmown_para = ['gdbot_syntax_version', 'file_title', 'log_file', 'email_log']
+lst_known_para = ['gdbot_syntax_version', 'file_title', 'log_file', 'email_log']
 
 # create logger
 log = logging.getLogger('gdbot.rules')
@@ -15,24 +15,24 @@ log = logging.getLogger('gdbot.rules')
 def str_to_rule(str_in):
     """reads a text string, and try to make a rule dictionary out of it.
     returns a dictionary"""
+    log.debug("str_to_rule: "+str_in.strip())
     str_i = str_in.strip().split('#')[0].strip()
     if len(str_i)>0:
-        log.debug("str_to_rule: "+str_i)
         if(str_i[0]=="%"): # % Parameter str_i
-            dic_rule = dict(valid=False,type='para',errors=list(),
-                            key="",val="")
+            dic_rule = dict(valid=False,type='para',errors=list(),key="",val="")
             lst_par = str_i[1:].split('=')
             lst_par = [par.strip() for par in lst_par]
-            #for i in range(len(lst_par)):
-            #    lst_par[i] = lst_par[i].strip()
-            if lst_par[0]=='gdbot_syntax_version' and lst_par[1]=='2.0':
+            if lst_par[0] in lst_known_para:
                 dic_rule['key']=lst_par[0].strip()
                 dic_rule['val']=lst_par[1].strip()
                 dic_rule['valid']=True
-                log.info('Recognice: '+str(dic_rule['key'])+' = '+str(dic_rule['val']))
+                log.info('Parameter recogniced: '+str(dic_rule['key'])+' = '+str(dic_rule['val']))
+            else:
+                dic_rule['valid']=False
+                dic_rule['errors'].append("Unrecogniced parameter: "+lst_par[0])
+                log.warning('#205 > '+str(dic_rule['errors'])+' raw line: '+str_i)
         elif(str_i[0]==":"): # : Rule str_i
-            dic_rule = dict(valid=False,type='rule',errors=list(),
-                            id="",title="",mode="",data_table="",condition="",action="",act_param="",comment="")
+            dic_rule = dict(valid=False,type='rule',errors=list(),id="",title="",mode="",data_table="",condition="",action="",act_param="",comment="")
             lst_items = str_i[1:].split(":")
             lst_items = [itm.strip() for itm in lst_items]
             if len(lst_items)==8:
@@ -47,6 +47,7 @@ def str_to_rule(str_in):
                 dic_rule = sanity_check(dic_rule)
                 if not dic_rule['valid']:
                     log.warning('#203 invalid rule > '+str(dic_rule['errors'])+' raw line: '+str_in)
+                log.debug('parsed good rule: '+str(dic_rule))
             else:
                 dic_rule['errors'].append("Rule string does not contain the correct number of elements - Check that you comment do not contain ':'. Ignoring this rule. \n\t"+str_in.strip()+"\n\t"+str(len(lst_items))+'\t'+str(lst_items))
                 log.warning('#202 '+dic_rule['errors'])
@@ -55,8 +56,8 @@ def str_to_rule(str_in):
             dic_rule['errors'].append("Rule string must start with #, % or : "+str_in[0]+" ("+str_in+")")
             log.warning('#201 '+dic_rule['errors'][-1:])
             dic_rule['valid']=False
-    else:
-        return {'valid':False}
+    else:  # Empty (or only comments) str_i
+        return {'type':'null', 'valid':True}
     return dic_rule
 
 def sanity_check(dic_rule):
@@ -96,8 +97,13 @@ def read_gdbot_file(str_infile):
                     lst_good_rules.append(dic_r)
                 elif dic_r['type']=='para':
                     lst_para.append(dic_r)
+                elif dic_r['type']=='null':
+                    pass # various forms of empty lines, comments, etc.
                 else:
                     lst_bad_rules.append(dic_r)
             else:
                 lst_bad_rules.append(dic_r)
+    if len(lst_bad_rules)>0:
+        for rule in lst_bad_rules:
+            log.warning('Counted bad lines: '+str(len(lst_bad_rules)))
     return [lst_para,lst_good_rules,lst_bad_rules]

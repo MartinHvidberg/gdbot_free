@@ -33,7 +33,7 @@ def main(data, rulefile, logfile, mails):
     
     # Read the .gdbot file and build the list of bot-rules
     lst_para, lst_good, lst_badr = gdbot_rules.read_gdbot_file(rulefile)
-    log.info("para:"+str(lst_para))
+    log.info("para:"+str(len(lst_para)))
     log.info("good:"+str(len(lst_good)))
     log.info("badr:"+str(len(lst_badr)))
     
