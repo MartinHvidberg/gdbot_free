@@ -1,9 +1,13 @@
 """
-Functions handeling gdbot rules
+Functions handeling gdbot rules, ver. 2.0
 mainly reading rules from text files and generating rule objects (dictionary)
 some elementary sanity checking of the rules, before they are applied
 """
+
 import logging
+
+# Recognised parameters in gdbot ver. 2.0
+lst_kmown_para = ['gdbot_syntax_version', 'file_title', 'log_file', 'email_log']
 
 # create logger
 log = logging.getLogger('gdbot.rules')
@@ -11,26 +15,27 @@ log = logging.getLogger('gdbot.rules')
 def str_to_rule(str_in):
     """reads a text string, and try to make a rule dictionary out of it.
     returns a dictionary"""
-    lst_in = str_in.split('#')[0].strip()
-    if len(str_in)>0:
-        log.info("str_to_rule: "+str_in.strip())
-        dic_rule = dict(valid=False,type=None,errors=list(),
-                        id="",title="",mode="",data_table="",condition="",action="",act_param="",comment="",
-                        key="",val="")
-        if(str_in[0]=="%"): # % Parameter str_in
-            lst_par = str_in.strip("%").strip().split('=')
-            log.info(str(lst_par))
-            if lst_par[0].strip()=='gdbot_syntax_version' and lst_par[1].strip()=='2.0':
-                dic_rule['type']='para'
+    str_i = str_in.strip().split('#')[0].strip()
+    if len(str_i)>0:
+        log.debug("str_to_rule: "+str_i)
+        if(str_i[0]=="%"): # % Parameter str_i
+            dic_rule = dict(valid=False,type='para',errors=list(),
+                            key="",val="")
+            lst_par = str_i[1:].split('=')
+            lst_par = [par.strip() for par in lst_par]
+            #for i in range(len(lst_par)):
+            #    lst_par[i] = lst_par[i].strip()
+            if lst_par[0]=='gdbot_syntax_version' and lst_par[1]=='2.0':
                 dic_rule['key']=lst_par[0].strip()
                 dic_rule['val']=lst_par[1].strip()
                 dic_rule['valid']=True
-                log.info("Recognise gdbot version 2.0")
-        elif(str_in[0]==":"): # : Rule str_in
-            lst_items = str_in[1:].split(":")
-            log.info(str(lst_items))
+                log.info('Recognice: '+str(dic_rule['key'])+' = '+str(dic_rule['val']))
+        elif(str_i[0]==":"): # : Rule str_i
+            dic_rule = dict(valid=False,type='rule',errors=list(),
+                            id="",title="",mode="",data_table="",condition="",action="",act_param="",comment="")
+            lst_items = str_i[1:].split(":")
+            lst_items = [itm.strip() for itm in lst_items]
             if len(lst_items)==8:
-                dic_rule['type']='rule'
                 dic_rule['id']=lst_items[0]
                 dic_rule['title']=lst_items[1]
                 dic_rule['mode']=lst_items[2].upper()
@@ -40,16 +45,19 @@ def str_to_rule(str_in):
                 dic_rule['act_param']=lst_items[6]
                 dic_rule['comment']=lst_items[7]
                 dic_rule = sanity_check(dic_rule)
+                if not dic_rule['valid']:
+                    log.warning('#203 invalid rule > '+str(dic_rule['errors'])+' raw line: '+str_in)
             else:
                 dic_rule['errors'].append("Rule string does not contain the correct number of elements - Check that you comment do not contain ':'. Ignoring this rule. \n\t"+str_in.strip()+"\n\t"+str(len(lst_items))+'\t'+str(lst_items))
+                log.warning('#202 '+dic_rule['errors'])
                 dic_rule['valid']=False
-                log.warning('MSG1')
         else:
             dic_rule['errors'].append("Rule string must start with #, % or : "+str_in[0]+" ("+str_in+")")
+            log.warning('#201 '+dic_rule['errors'][-1:])
             dic_rule['valid']=False
-            log.warning(dic_rule['errors'][-1:])
-        return dic_rule
-    return 0
+    else:
+        return {'valid':False}
+    return dic_rule
 
 def sanity_check(dic_rule):
     dic_rule['valid']=True # Assumed good, until proved bad

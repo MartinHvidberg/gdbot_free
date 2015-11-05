@@ -74,7 +74,7 @@ if __name__ == "__main__":
     log = logging.getLogger('gdbot')
     log.setLevel(logging.DEBUG)
     log_fil = logging.FileHandler(logfile, mode='w')
-    log_fil.setLevel(logging.DEBUG)
+    log_fil.setLevel(logging.INFO)
     log_fil.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(message)s')) #
     log.addHandler(log_fil)
     log.info(str_start_message)
