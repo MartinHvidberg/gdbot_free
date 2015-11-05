@@ -71,18 +71,13 @@ if __name__ == "__main__":
     
     # Start message, and logging
     str_start_message = "Start\n\tprogram: "+str_title+"\n\tversion: "+str_version+"\n\tlogfile: "+logfile+"\n\trulefile: "+rules+"\n\tdataconn: "+data+"\n\te-mail(s): "+str(mails)
-    logger = logging.getLogger('gdbot_2.0')
-    logger.setLevel(logging.DEBUG)
-    log_fil = logging.FileHandler(logfile) # logfile
+    log = logging.getLogger(__name__)
+    log.setLevel(logging.DEBUG)
+    log_fil = logging.FileHandler(logfile, mode='w')
     log_fil.setLevel(logging.DEBUG)
-    #log_con = logging.StreamHandler() # console messages
-    #log_con.setLevel(logging.ERROR)
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    #log_con.setFormatter(formatter)
-    log_fil.setFormatter(formatter)
-    #logger.addHandler(log_con)
-    logger.addHandler(log_fil)
-    logger.info(str_start_message)
+    log_fil.setFormatter(logging.Formatter('%(asctime)s - %(message)s')) #- %(levelname)s 
+    log.addHandler(log_fil)
+    log.info(str_start_message)
     
     # Run
     timStart = datetime.now()
@@ -91,8 +86,8 @@ if __name__ == "__main__":
 
     # Clean and close
     durRun = timEnd - timStart
-    str_end_message = "Completed sucessfuly\n\tPython script completed - duration (h:mm:ss.dd): " + str(durRun)[:-3]
-    logger.info(str_end_message)
+    str_end_message = "Python script completed - duration (h:mm:ss.dd): " + str(durRun)[:-3]
+    log.info(str_end_message)
     print str_end_message    
     
 # End of Python script ...
