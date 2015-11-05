@@ -33,9 +33,9 @@ def main(data, rulefile, logfile, mails):
     
     # Read the .gdbot file and build the list of bot-rules
     lst_para, lst_good, lst_badr = gdbot_rules.read_gdbot_file(rulefile)
-    print "para:"+str(lst_para)
-    print "good:"+str(len(lst_good))
-    print "badr:"+str(len(lst_badr))
+    log.info("para:"+str(lst_para))
+    log.info("good:"+str(len(lst_good)))
+    log.info("badr:"+str(len(lst_badr)))
     
     #===========================================================================
     # lstRules = rule_parser.ReadRules(rulefile)    
@@ -70,12 +70,12 @@ if __name__ == "__main__":
         mails = sys.argv[4].split(',')
     
     # Start message, and logging
-    str_start_message = "Start\n\tprogram: "+str_title+"\n\tversion: "+str_version+"\n\tlogfile: "+logfile+"\n\trulefile: "+rules+"\n\tdataconn: "+data+"\n\te-mail(s): "+str(mails)
-    log = logging.getLogger(__name__)
+    str_start_message = "Start\n\tprogram : "+str_title+"\n\tversion : "+str_version+"\n\tlogfile : "+logfile+"\n\trulefile: "+rules+"\n\tdataconn: "+data+"\n\te-mails : "+str(mails)
+    log = logging.getLogger('gdbot')
     log.setLevel(logging.DEBUG)
     log_fil = logging.FileHandler(logfile, mode='w')
     log_fil.setLevel(logging.DEBUG)
-    log_fil.setFormatter(logging.Formatter('%(asctime)s - %(message)s')) #- %(levelname)s 
+    log_fil.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(message)s')) #
     log.addHandler(log_fil)
     log.info(str_start_message)
     
