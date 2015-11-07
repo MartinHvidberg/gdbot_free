@@ -22,13 +22,9 @@ from datetime import datetime # for datetime.now()
 import logging
 
 import gdbot_rules
-#import data_checker
+import gdbot_data
 
 def main(data, rulefile, logfile, mails):
-    
-    # Read .gdbot file
-    rul_a = gdbot_rules.str_to_rule("")
-    print str(rul_a)
     
     # Read the .gdbot file and build the list of bot-rules
     lst_para, lst_good, lst_badr = gdbot_rules.read_gdbot_file(rulefile)
@@ -36,10 +32,9 @@ def main(data, rulefile, logfile, mails):
     log.info("good:"+str(len(lst_good)))
     log.info("badr:"+str(len(lst_badr)))
     
-    ###data_checker.CheckData(data, lstRules)
+    gdbot_data.check_data(data, lst_good)
     
     # send e-mail, if required
-    #gdbot_utils.send_log_to_email(mails, "gdbot report: "+str(datetime.now()), "Error")
 
     return 0
     
@@ -47,15 +42,15 @@ if __name__ == "__main__":
     
     # Initialise 
     rules = r"../rules/small.gdbot"
-    logfile = r"../logs/log.txt"
     data = r"../data/some_data.file"
+    logfile = r"../logs/log.txt"
     mails = []
     if (len(sys.argv)>1 and sys.argv[1]!="#"): # # means default
         rules = sys.argv[1]    
     if len(sys.argv)>2 and sys.argv[2]!="#":
-        logfile = sys.argv[2]
+        data = sys.argv[2]
     if len(sys.argv)>3 and sys.argv[3]!="#":
-        data = sys.argv[3]
+        logfile = sys.argv[3]
     if len(sys.argv)>4 and sys.argv[4]!="#":
         mails = sys.argv[4].split(',')
     

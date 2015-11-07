@@ -1,51 +1,55 @@
-import ogr
 
-import gdbot_utils
+import logging
 
-def DataOpen(str_data, mode):
-    """Connect to database with OGR connection, and prepare a version for editing."""
-    gdbot_utils.log("   < DataOpen() >")
-    gdbot_utils.log("   "+str_data)
-    if not mode in ('r', 'rw'):
-        gdbot_utils.log("   Unexpected mode: "+mode)
-        return 201
-    data_connection = ogr.open(str_data, mode) XXX
-    if not data_connection:
-        gdbot_utils.log("   Can't open data source: "+str_data)
-        return 202        
-    return data_connection
+from osgeo import ogr
+# create logger
 
-def DataClose(data_connection):
-    """Close the data connection"""    
-    gdbot_utils.log("   < DataClose() >")
-    data_connection.close() XXX
-    return 0
+log = logging.getLogger('gdbot.data')
 
-def CheckTables(dataset, rules):
-    """Check the tables of the given dataset, according to the rules."""
+# use OGR specific exceptions
+ogr.UseExceptions()
+
+def data_open(str_data, type="OpenFileGDB", mode='r'):
+    """ Connect to database with OGR connection, and prepare a version for editing. """
+    log.info("open OGR data\n\tdata: "+str(str_data)+"\n\ttype; "+str(type)+"\n\tmode: "+str(mode))
+    driver = ogr.GetDriverByName(type)
+    tup_allowed_modes = ('r') # ('r', 'rw')
+    if not mode in tup_allowed_modes:
+        log.error("#201 Unexpected mode > "+mode+" only allowed modes are: "+str(tup_allowed_modes))
+        return 0
+    try:
+        con_data = driver.Open(str_data, 0)
+    except Exception, e:
+        log.error("#202 can't open data > "+str(e))
+        return 0
+    if con_data:
+        return con_data
+    else:
+        log.error("#203 No con_data object returned, by ogr.driver.open().")
+
+def data_check(con_data, lst_rules):
+    """Check the tables of the given data set, according to the rules."""
+
+    # list to store layers'names
+    featsClassList = []
     
-    # If you get: "RuntimeError: An expected Field was not found or could not be retrieved properly."
-    # don't use double quotes in condition input, use single quotes!!!
+    # parsing layers by index
+    for featsClass_idx in range(con_data.GetLayerCount()):
+        featsClass = con_data.GetLayerByIndex(featsClass_idx)
+        featsClassList.append(featsClass.GetName())
+    
+    # sorting
+    featsClassList.sort()
+    
+    # printing
+    for featsClass in featsClassList:
+        print 'fc',featsClass
 
-    gdbot_utils.log("   < CheckTables() >")
-    totalFixes = 0
-    totalLogs = 0
 
-    Walk the data table, and apply each rule in rules
-
-    str_end_message = "Done checking tables, total {} log hits and {} fixes.".format(totalLogs, totalFixes)
-    gdbot_utils.log("     "+str_end_message)
-    print str_end_message
-
-
-def CheckData(dataset, rules, verbosity):
-    """Check a dataset, using the given rule set."""
-    gdbot_utils.log("   < CheckData() >")    
-    hasEdits = False
-    for rule in rules:
-        if rule.dofix:
-            hasEdits = True    
-    con_data = DataOpen(dataset)    
-    CheckTables(con_data, rules, verbosity) # *** This is the big enchilada 
-    DataClose(con_data)
+def check_data(dataset, lst_rules):
+    """Check a data set, using the given rule set."""
+    con_data = data_open(dataset, "OpenFileGDB", 'r')   
+    res_check = data_check(con_data, lst_rules) # *** This is the big enchilada 
+    return res_check
+    
     

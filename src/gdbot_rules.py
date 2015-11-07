@@ -6,11 +6,11 @@ some elementary sanity checking of the rules, before they are applied
 
 import logging
 
-# Recognised parameters in gdbot ver. 2.0
-lst_known_para = ['gdbot_syntax_version', 'file_title', 'log_file', 'email_log']
-
 # create logger
 log = logging.getLogger('gdbot.rules')
+
+# Recognised parameters in gdbot ver. 2.0
+lst_known_para = ['gdbot_syntax_version', 'file_title', 'log_file', 'email_log']
 
 def str_to_rule(str_in):
     """reads a text string, and try to make a rule dictionary out of it.
@@ -106,4 +106,4 @@ def read_gdbot_file(str_infile):
     if len(lst_bad_rules)>0:
         for rule in lst_bad_rules:
             log.warning('Counted bad lines: '+str(len(lst_bad_rules)))
-    return [lst_para,lst_good_rules,lst_bad_rules]
+    return (lst_para,lst_good_rules,lst_bad_rules)
