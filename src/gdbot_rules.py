@@ -26,10 +26,10 @@ def str_to_rule(str_in):
                 dic_rule['key']=lst_par[0].strip()
                 dic_rule['val']=lst_par[1].strip()
                 dic_rule['valid']=True
-                log.info('Parameter recogniced: '+str(dic_rule['key'])+' = '+str(dic_rule['val']))
+                log.info('Parameter recognised: '+str(dic_rule['key'])+' = '+str(dic_rule['val']))
             else:
                 dic_rule['valid']=False
-                dic_rule['errors'].append("Unrecogniced parameter: "+lst_par[0])
+                dic_rule['errors'].append("Unrecognised parameter: "+lst_par[0])
                 log.warning('#205 > '+str(dic_rule['errors'])+' raw line: '+str_i)
         elif(str_i[0]==":"): # : Rule str_i
             dic_rule = dict(valid=False,type='rule',errors=list(),id="",title="",mode="",data_table="",condition="",action="",act_param="",comment="")

@@ -15,13 +15,12 @@
 """
 
 str_title = __file__
-str_version = "2.0.0 build 20151103"
+str_version = "2.0.0 build 20151107"
 
 import sys
 from datetime import datetime # for datetime.now()
 import logging
 
-import gdbot_utils
 import gdbot_rules
 #import data_checker
 
@@ -36,15 +35,6 @@ def main(data, rulefile, logfile, mails):
     log.info("para:"+str(len(lst_para)))
     log.info("good:"+str(len(lst_good)))
     log.info("badr:"+str(len(lst_badr)))
-    
-    #===========================================================================
-    # lstRules = rule_parser.ReadRules(rulefile)    
-    # if isinstance(lstRules, int): # if ReadRules returned a number, it's an error code...
-    #     gdbot_utils.log("ReadRules returned an error...")
-    #     return lstRules
-    # print "Number of rules: "+str(len(lstRules))
-    # gdbot_utils.log("  Checking {}, {} rules".format(rulefile, len(lstRules)))
-    #===========================================================================
     
     ###data_checker.CheckData(data, lstRules)
     
