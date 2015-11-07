@@ -39,8 +39,8 @@ def str_to_rule(str_in):
                 dic_rule['id']=lst_items[0]
                 dic_rule['title']=lst_items[1]
                 dic_rule['mode']=lst_items[2].upper()
-                dic_rule['data_table']=lst_items[3]
-                dic_rule['connection']=lst_items[4]
+                dic_rule['layer']=lst_items[3]
+                dic_rule['condition']=lst_items[4]
                 dic_rule['action']=lst_items[5]
                 dic_rule['act_param']=lst_items[6]
                 dic_rule['comment']=lst_items[7]
@@ -66,11 +66,11 @@ def sanity_check(dic_rule):
     if dic_rule['type'] not in lst_valid_type:
         dic_rule['errors'].append("Rule have invalid type: "+str(dic_rule['type'])+'. Valid modes are '+str(lst_valid_type))
         dic_rule['valid']=False
-    for field in ['id','title','mode','data_table','action','act_param','comment']: # 'connection', should likely allow local chars
+    for field in ['id','title','mode','layer','action','act_param','comment']: # 'condition', should likely allow local chars
         if not isinstance(dic_rule[field], str):
             dic_rule['errors'].append("Please don't use unicode in rules field: "+str(field))
             dic_rule['valid']=False
-    for field in ['id','title','mode','data_table','connection','action','act_param','comment']:
+    for field in ['id','title','mode','layer','condition','action','act_param','comment']:
         if isinstance(dic_rule[field], str):
             if len(dic_rule[field]) < 1:
                 dic_rule['errors'].append("Parameter in rule seems to be very short. field: "+str(field)+" value: "+dic_rule[field])
@@ -107,3 +107,14 @@ def read_gdbot_file(str_infile):
         for rule in lst_bad_rules:
             log.warning('Counted bad lines: '+str(len(lst_bad_rules)))
     return (lst_para,lst_good_rules,lst_bad_rules)
+
+def show_rule(dic_rule):
+    if dic_rule['type'] == 'rule':
+        str_ret = ""
+        for noget in ('id', 'title','mode','layer','condition','action','act_param','comment'):
+            str_ret += "\n: "+noget+" : " + str(dic_rule[noget])
+    else:
+        str_ret = "#210 > Can't show rule of unknown type ..."
+        log.warn(str_ret)
+    return str_ret.strip()
+
