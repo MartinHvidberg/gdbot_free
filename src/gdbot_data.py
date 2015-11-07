@@ -29,21 +29,14 @@ def data_open(str_data, type="OpenFileGDB", mode='r'):
 
 def data_check(con_data, lst_rules):
     """Check the tables of the given data set, according to the rules."""
-
-    # list to store layers'names
     featsClassList = []
-    
-    # parsing layers by index
     for featsClass_idx in range(con_data.GetLayerCount()):
         featsClass = con_data.GetLayerByIndex(featsClass_idx)
         featsClassList.append(featsClass.GetName())
-    
-    # sorting
     featsClassList.sort()
-    
-    # printing
     for featsClass in featsClassList:
         print 'fc',featsClass
+        log.info("Layer: "+str(featsClass))
 
 
 def check_data(dataset, lst_rules):
