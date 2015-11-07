@@ -29,14 +29,12 @@ def data_open(str_data, type="OpenFileGDB", mode='r'):
 
 def data_check(con_data, lst_rules):
     """Check the tables of the given data set, according to the rules."""
-    featsClassList = []
     for featsClass_idx in range(con_data.GetLayerCount()):
         featsClass = con_data.GetLayerByIndex(featsClass_idx)
-        featsClassList.append(featsClass.GetName())
-    featsClassList.sort()
-    for featsClass in featsClassList:
-        print 'fc',featsClass
-        log.info("Layer: "+str(featsClass))
+        def_layer = featsClass.GetLayerDefn()
+        print "Layer: ", featsClass.GetName()
+        for i in range(def_layer.GetFieldCount()):
+            print "    field:",def_layer.GetFieldDefn(i).GetName()
 
 
 def check_data(dataset, lst_rules):
