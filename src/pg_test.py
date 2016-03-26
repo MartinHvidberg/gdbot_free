@@ -6,7 +6,7 @@ import ppygis
 
 # Connect to an existing spatially enabled database
 try:
-    con = psycopg2.connect("dbname='testqgis' user='postgres' host='localhost' password='postgres'")
+    con = psycopg2.connect("dbname='testqgis' user='editor' host='localhost' password='iceicebaby'")
 except:
     print "I am unable to connect to the database"
 cur = con.cursor()
