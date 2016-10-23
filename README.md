@@ -1,6 +1,6 @@
 # README #
 
-I got tired of arcpy, and decided to port gdbot to GDAL/OGR
+I got tired of arcpy, and decided to port gdbot to 100% Open Source, no dependencies on any closed code... 
 
 ### What is this repository for? ###
 
@@ -12,7 +12,8 @@ I got tired of arcpy, and decided to port gdbot to GDAL/OGR
 * Summary of set up
 * Configuration
 * Dependencies
-   GDAL/OGR (presuably)
+   GDAL/OGR (for open source based handeling of Esri's .gdb)
+   psycopg2 (for PostgreSQL)
 * Database configuration
 * How to run tests
 * Deployment instructions

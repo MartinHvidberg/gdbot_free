@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import sys
 
 import psycopg2
 import ppygis
@@ -9,6 +10,7 @@ try:
     con = psycopg2.connect("dbname='testqgis' user='editor' host='localhost' password='iceicebaby'")
 except:
     print "I am unable to connect to the database"
+    sys.exit(101)
 cur = con.cursor()
 print str(type(cur)), cur
 

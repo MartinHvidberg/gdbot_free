@@ -1,0 +1,1 @@
+{"user": "my_user_name", "host": "localhost", "password": "my_pass_word", "port": 5432, "dbname": "my_data_base", "conn_type":"psycopg2_PostgreSQL", "conn_mode":"r"}

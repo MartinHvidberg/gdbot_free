@@ -1,4 +1,4 @@
-"""
+""" gdbot_rules
 Functions handeling gdbot rules, ver. 2.0
 mainly reading rules from text files and generating rule objects (dictionary)
 some elementary sanity checking of the rules, before they are applied
@@ -8,6 +8,7 @@ import logging
 
 # create logger
 log = logging.getLogger('gdbot.rules')
+log.info("init this logger...") # <--- Why is this not showing up in the log? XXX
 
 # Recognised parameters in gdbot ver. 2.0
 lst_known_para = ['gdbot_syntax_version', 'file_title', 'log_file', 'email_log']
@@ -18,8 +19,8 @@ def str_to_rule(str_in):
     log.debug("str_to_rule: "+str_in.strip())
     str_i = str_in.strip().split('#')[0].strip()
     if len(str_i)>0:
+        dic_rule = dict(valid=False,type='para',errors=list(),key="",val="")
         if(str_i[0]=="%"): # % Parameter str_i
-            dic_rule = dict(valid=False,type='para',errors=list(),key="",val="")
             lst_par = str_i[1:].split('=')
             lst_par = [par.strip() for par in lst_par]
             if lst_par[0] in lst_known_para:
@@ -53,8 +54,8 @@ def str_to_rule(str_in):
                 log.warning('#202 '+dic_rule['errors'])
                 dic_rule['valid']=False
         else:
-            dic_rule['errors'].append("Rule string must start with #, % or : "+str_in[0]+" ("+str_in+")")
-            log.warning('#201 '+dic_rule['errors'][-1:])
+            dic_rule['errors'].append("Rule string must start with #, % or : But I found: "+str_in[0]+" in line ("+str_in+")")
+            log.warning('#201 '+str(dic_rule['errors'][-1:]))
             dic_rule['valid']=False
     else:  # Empty (or only comments) str_i
         return {'type':'null', 'valid':True}
@@ -86,6 +87,8 @@ def sanity_check(dic_rule):
     return dic_rule
 
 def read_gdbot_file(str_infile):
+    """ Read .gdbot file
+        Return tuple of three lists """
     lst_para = list()
     lst_good_rules = list()
     lst_bad_rules = list()

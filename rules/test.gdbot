@@ -1,0 +1,9 @@
+% gdbot_syntax_version = 2.0 # From ver. 2.0 only OGR data are supported, and FCsubtype therefore have to go ...
+% file_title = "small gdbot sample file" # A reference name to put in the header of the log
+% log_file = small.gdbotlog # filename, may include full or relative path. Can be overwritten by gdbot.py 
+% email_log = (martin@hvidberg.net) # if empty, don't send log file by email
+
+# : RuleID : RuleTitle : Mode : Feature_Class : Condition : ActionType : Action : Comments
+: tst : Test rule : SQL : Roads : SomeField NOT IN (1,2,3) : LOG : N/A : This is a test rule
+
+xxx# : Roads <- The FC(s) affected by this rule. String, or comma-separated string, or * for all FCs

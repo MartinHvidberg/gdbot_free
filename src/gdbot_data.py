@@ -1,55 +1,72 @@
+""" gdbot_data
+Functions that involve data (db connections) only.
+Mainly establishing connection, but also any pre- or post-check things 
+that only requires a data-object, and no rule object.
+"""
 
 import logging
+import json
 
 from osgeo import ogr
+import psycopg2
+
+import ec.uap # Hide the names and passwords in a file not shared as open source...
+
 # create logger
-
-import gdbot_rules
-
 log = logging.getLogger('gdbot.data')
+log.info(" init this logger...") # <--- Why is this not showing up in the log? XXX
 
 # use OGR specific exceptions
 ogr.UseExceptions()
 
-def data_open(str_data, type="OpenFileGDB", mode='r'):
-    """ Connect to database with OGR connection, and prepare a version for editing. """
-    log.info("open OGR data\n\tdata: "+str(str_data)+"\n\ttype; "+str(type)+"\n\tmode: "+str(mode))
-    driver = ogr.GetDriverByName(type)
-    tup_allowed_modes = ('r') # ('r', 'rw')
-    if not mode in tup_allowed_modes:
-        log.error("#201 Unexpected mode > "+mode+" only allowed modes are: "+str(tup_allowed_modes))
-        return 0
+def write_connection_file(str_file_name):
+    uap = ec.uap.UaP()
+    dic_test = {'host' : 'localhost',
+                'port' : 5432,
+                'dbname' : 'pgv',
+                'user' : uap.id(),
+                'password' : uap.pw()
+                }
+    with open(str_file_name, 'w') as fil:
+        fil.write(json.dumps(dic_test))
+    return
+
+def read_connection_file(str_file_name):
     try:
-        con_data = driver.Open(str_data, 0)
-    except Exception, e:
-        log.error("#202 can't open data > "+str(e))
-        return 0
-    if con_data:
-        return con_data
+        with open(str_file_name, 'r') as fil:
+            str_samp = fil.readlines()
+    except:
+        print "ERROR - Can't open file: "+str_file_name
+        return (None,None,None)
+    dic_samp = json.loads(str_samp[0])
+    return dic_samp
+
+def data_open(str_data, type="OpenFileGDB", mode='r'):
+    log.debug("Opening data connection\n\ttype; "+str(type)+"\n\tmode: "+str(mode))
+    if type == "OpenFileGDB":
+        """ Connect to database with OGR connection, and prepare a version for editing. """
+        log.info("open OGR data\n\tdata: "+str(str_data)+"\n\ttype; "+str(type)+"\n\tmode: "+str(mode))
+        driver = ogr.GetDriverByName(type)
+        tup_allowed_modes = ('r') # ('r', 'rw')
+        if not mode in tup_allowed_modes:
+            log.error("#201 Unexpected mode > "+mode+" only allowed modes are: "+str(tup_allowed_modes))
+            return 0
+        try:
+            con_data = driver.Open(str_data, 0)
+        except Exception, e:
+            log.error("#202 can't open data > "+str(e))
+            return 0
+        if con_data:
+            return con_data
+        else:
+            log.error("#203 No con_data object returned, by ogr.driver.open().")
+    elif type == "psycopg2_PostgreSQL":
+        """ Connect to PostgreSQL database directly, using psycopg2. """
+        log.info("Opening data connection:\n\ttype; "+str(type)+"\n\tmode: "+str(mode))
+        return (1,2,3)
     else:
-        log.error("#203 No con_data object returned, by ogr.driver.open().")
+        """ Not a recognised type """
+        log.error("Not a recognised type\n\tdata: "+str(str_data)+"\n\ttype; "+str(type)+"\n\tmode: "+str(mode))
+        return None
 
-def data_check(con_data, lst_rules):
-    """Check the tables of the given data set, according to the rules."""
-    #for rule in lst_rules:
-    #    print gdbot_rules.show_rule(rule)
-    for featsClass_idx in range(con_data.GetLayerCount()):
-        featsClass = con_data.GetLayerByIndex(featsClass_idx)
-        def_layer = featsClass.GetLayerDefn()
-        str_lyr_name = featsClass.GetName()
-        print "Layer: ", str_lyr_name        
-        for i in range(def_layer.GetFieldCount()):
-            str_fld_name = def_layer.GetFieldDefn(i).GetName()
-            print "    field:", str_fld_name
-            # Select the rules that apply...
-            lst_appl_rules = list()
-            for rul_i in lst_rules:
-                pass#if rul[]
-
-def check_data(dataset, lst_rules):
-    """Check a data set, using the given rule set."""
-    con_data = data_open(dataset, "OpenFileGDB", 'r')   
-    res_check = data_check(con_data, lst_rules) # *** This is the big enchilada 
-    return res_check
-    
-    
+        
