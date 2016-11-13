@@ -46,22 +46,25 @@ def main(connfile, rulefile, logfile, mails):
     # Read the connection info and build a data object
     log.info("*** Making Connection...")
     dta = gdbot_data.Data(connfile)
-    if dta:
-        # open the connection
-        print dta.conn_type
-        dta.data_open()
-        dta.list_geo_layers()            
-        log.info("gis layers: "+str(dta.lst_layer))
-        log.info("gis features: "+str(dta.lst_feat_count))
+    # open the connection
+    print dta.conn_type
+    dta.data_open()
+    dta.list_geo_layers()            
+    log.info("gis layers: "+str(dta.lst_layer))
+    log.info("gis features: "+str(dta.lst_feat_count))
+    if len(dta.lst_layer)>0: # if gis layers have been found
         # Read the .gdbot file and build the list of bot-rules
         log.info("*** Making Rules...")
         lst_para, lst_good, lst_badr = gdbot_rules.read_gdbot_file(rulefile)
         log.info("para:"+str(len(lst_para)))
         log.info("good:"+str(len(lst_good)))
         log.info("badr:"+str(len(lst_badr)))
-        if len(lst_good)>0:
-            # gdbot_data.check_data(data, lst_good)
+        if len(lst_good)>0: # if valid rools have been found
             log.info("*** Checking data...")
+            for str_layrname in dta.list_geo_layers():
+                log.info(" ** Checking: "+str_layrname)
+                gdbot_check.check_data(dta.con.GetLayerByName(str_layrname), lst_good)
+                # XXX ExecuteSQL (http://gdal.org/python/osgeo.ogr.DataSource-class.html)
             # send e-mail, if required
             log.info("*** Emailing results...")    
             return 0

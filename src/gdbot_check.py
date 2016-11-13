@@ -28,10 +28,15 @@ def data_check(con_data, lst_rules):
             for rul_i in lst_rules:
                 pass#if rul[]
 
-def check_data(dataset, lst_rules):
+def check_data(layer, lst_rules):
     """Check a data set, using the given rule set."""
-    con_data = data_open(dataset, "OpenFileGDB", 'r')   
-    res_check = data_check(con_data, lst_rules) # *** This is the big enchilada 
-    return res_check
+    log.info("layer: "+str(layer.GetName()))
+    log.info("rules: "+str(lst_rules))
+    cnt = 0
+    for record in layer:
+        cnt += 1
+        print layer.GetName(), cnt
+        #res_check = data_check(con_data, lst_rules) # *** This is the big enchilada 
+    #return
     
     

@@ -96,8 +96,7 @@ class Data(object):
             """ Not a recognized type """
             log.error("Not a recognized type in self.conn_type; "+str(self.conn_type))
             return None
-        
-    def list_geo_layers(self):        
+        # List gis layers, and count features in each
         if self.conn_type in ["PostgreSQL"]:
             self.lst_layer = list()
             for i in self.con:
@@ -109,3 +108,6 @@ class Data(object):
             for str_layname in self.lst_layer:
                 lyr = self.con.GetLayer(str_layname)
                 self.lst_feat_count.append(lyr.GetFeatureCount())
+        
+    def list_geo_layers(self):        
+        return self.lst_layer
