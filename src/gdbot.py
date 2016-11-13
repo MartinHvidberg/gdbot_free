@@ -45,8 +45,14 @@ def main(connfile, rulefile, logfile, mails):
     
     # Read the connection info and build a data object
     log.info("*** Making Connection...")
-    data = gdbot_data.Data(connfile)
-    if data:
+    dta = gdbot_data.Data(connfile)
+    if dta:
+        # open the connection
+        print dta.conn_type
+        dta.data_open()
+        dta.list_geo_layers()            
+        log.info("gis layers: "+str(dta.lst_layer))
+        log.info("gis features: "+str(dta.lst_feat_count))
         # Read the .gdbot file and build the list of bot-rules
         log.info("*** Making Rules...")
         lst_para, lst_good, lst_badr = gdbot_rules.read_gdbot_file(rulefile)
