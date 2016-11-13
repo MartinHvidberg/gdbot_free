@@ -1,5 +1,5 @@
 """ gdbot_data
-Functions that involve data (db connections) only.
+Functions that involve data (.shp file, .csv file, db connections) only.
 Mainly establishing connection, but also any pre- or post-check things 
 that only requires a data-object, and no rule object.
 """
@@ -31,20 +31,40 @@ def write_connection_file(str_file_name):
         fil.write(json.dumps(dic_test))
     return
 
-def read_connection_file(str_file_name):
-    try:
-        with open(str_file_name, 'r') as fil:
-            str_samp = fil.readlines()
-    except:
-        print "ERROR - Can't open file: "+str_file_name
-        return (None,None,None)
-    dic_samp = json.loads(str_samp[0])
-    return dic_samp
+class Data(object):
+    
+    def __init__(self, str_conn_file_name=None):
+        self.type = None
+        self.dic_raw_conn = None
+         
+        if str_conn_file_name:
+            self.read_connection_file(str_conn_file_name)
+        
+        if self.dic_raw_conn:
+            print str(self.dic_raw_conn)     
+        
+         
+    def read_connection_file(self,str_file_name):
+        try:
+            with open(str_file_name, 'r') as fil:
+                str_samp = fil.readlines()
+        except:
+            print "ERROR - Can't open file: "+str_file_name
+            return (None,None,None)
+        self.dic_raw_conn = json.loads(str_samp[0])
+        if 'type' in self.dic_raw_conn:
+            if self.dic_raw_conn['type'] == "sometype":
+                pass
+            if self.dic_raw_conn['type'] == "anothertype":
+                pass
+            else:
+                print "Error - Unknown connection type in: "+str_file_name
+        return
 
 def data_open(str_data, type="OpenFileGDB", mode='r'):
     log.debug("Opening data connection\n\ttype; "+str(type)+"\n\tmode: "+str(mode))
     if type == "OpenFileGDB":
-        """ Connect to database with OGR connection, and prepare a version for editing. """
+        """ Connect to database with OGR connection. """
         log.info("open OGR data\n\tdata: "+str(str_data)+"\n\ttype; "+str(type)+"\n\tmode: "+str(mode))
         driver = ogr.GetDriverByName(type)
         tup_allowed_modes = ('r') # ('r', 'rw')

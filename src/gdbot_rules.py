@@ -1,7 +1,8 @@
 """ gdbot_rules
 Functions handeling gdbot rules, ver. 2.0
+New in 2.0: 'CNT' action.
 mainly reading rules from text files and generating rule objects (dictionary)
-some elementary sanity checking of the rules, before they are applied
+some elementary sanity checking of the rules, before they are applied.
 """
 
 import logging
@@ -80,7 +81,7 @@ def sanity_check(dic_rule):
     if dic_rule['mode'] not in lst_valid_modes:
         dic_rule['errors'].append("Rule have invalid mode: "+str(dic_rule['mode'])+'. Valid modes are '+str(lst_valid_modes))
         dic_rule['valid']=False
-    lst_valid_action = ['LOG','FIX']
+    lst_valid_action = ['CNT','LOG','FIX'] # Counting, logging, fixing
     if dic_rule['action'] not in lst_valid_action:
         dic_rule['errors'].append("Rule have invalid action: "+str(dic_rule['action'])+'. Valid modes are '+str(lst_valid_action))
         dic_rule['valid']=False
